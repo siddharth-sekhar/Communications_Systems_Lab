@@ -1,0 +1,17 @@
+Am = 1;
+Ac = 1;
+fc = 200;
+fm = 50;
+fs = 5000;
+t = 0:1/fs:0.1;
+kf = 100;
+delta_f = (kf*Am);
+B = delta_f/fm;
+x = Am*cos(2*pi*fm*t);
+y = Ac*cos((2*pi*fc*t) + (1/fs)*2*pi*kf*cumsum(x));
+plot(t,x,'r',t,y,'b--');
+legend('Original Signal','Modulated Signal');
+title('Frequency Modulation of Signal');
+bandwidth = 2*delta_f + 2*fm;
+disp("The Bandwidth of the signal is:");
+disp(bandwidth);

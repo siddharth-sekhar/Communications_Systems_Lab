@@ -1,0 +1,31 @@
+clc; clear; close all;
+f = 1;    
+A = 5;
+fs = 100; 
+t = 0:1/fs:1;
+
+message = A * sin(2 * pi * f * t);
+N_values = [1, 2, 3, 4];
+
+for i = 1:length(N_values)
+    N = N_values(i);
+    levels = 2^N;  
+
+    delta = (2*A) / levels;             
+    quantized_signal = round(message / delta) * delta; 
+
+    annotation('textbox', [0.75, 0.95, 0.2, 0.05], 'String',...
+        'Syed Ziad Ahmed EC22B1050', 'EdgeColor', 'none', 'FontSize',...
+        12, 'HorizontalAlignment', 'right');
+ 
+    subplot(2,2,i);
+    plot(t, message, 'b--', 'LineWidth', 1.5);
+    hold on;
+    stairs(t, quantized_signal, 'r','LineWidth', 1.5);
+    title(['PCM Quantization (N = ', num2str(N), ')']);
+    xlabel('Time (s)');
+    ylabel('Amplitude');
+    legend('Original Signal', ['Quantized (N=', num2str(N), ')']);
+    grid on;
+    hold off;
+end

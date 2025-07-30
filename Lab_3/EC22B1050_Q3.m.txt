@@ -1,0 +1,33 @@
+clc; clear; close all;
+f = 1;
+A = 5;
+fs = 1000;
+t = 0:1/fs:1;
+
+message = A * sin(2 * pi * f * t);
+
+N_values = [1, 2, 3, 4]; 
+
+fprintf('Syed Ziad Ahmed EC22B1050\n');
+
+for i = 1:length(N_values)
+    N = N_values(i);
+    L = 2^N;
+    
+    delta = (2*A) / L;
+    quantized = round(message / delta) * delta;
+    quantized_error = message - quantized;
+
+    max_q_error = delta / 2;
+    
+    signal_power = var(message);
+    q_noise_power = var(quantized_error);
+
+    SQNR = 10 * log10(signal_power / q_noise_power);
+
+    fprintf('Quantization Levels: %d\n', L);
+    fprintf('Step Size: %.4f\n', delta);
+    fprintf('Max Quantization Error: %.4f\n', max_q_error);
+    fprintf('SQNR: %.2f dB\n\n', SQNR);
+
+end

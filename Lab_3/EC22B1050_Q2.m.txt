@@ -1,0 +1,93 @@
+clc; clear; close all;
+f = 1;    
+A = 5; 
+fs = 100; 
+t = 0:1/fs:1;
+
+message = A * sin(2 * pi * f * t);
+N_values = [1, 2, 3, 4];
+
+for i = 1:length(N_values)
+    N = N_values(i); 
+    levels = 2^N;  
+
+    delta = (2 * A) / levels;  
+    quantized = round(message / delta) * delta; 
+ 
+    quantization_error = message - quantized; 
+
+    quantized_index = round((quantized + A) / delta);  
+    encoded = dec2bin(quantized_index, N);
+
+    decoded_index = bin2dec(encoded);  
+    decoded = (decoded_index * delta) - A; 
+
+    L = length(message);
+    frequencies = linspace(-fs/2, fs/2, L);
+    spectrum_message = abs(fftshift(fft(message)));
+    spectrum_quantized = abs(fftshift(fft(quantized)));
+    spectrum_decoded = abs(fftshift(fft(decoded)));
+
+    encoded_binary = bin2dec(encoded); 
+
+    figure;
+    annotation('textbox', [0.75, 0.95, 0.2, 0.05], 'String',...
+        'Syed Ziad Ahmed EC22B1050', 'EdgeColor', 'none', 'FontSize',...
+        12, 'HorizontalAlignment', 'right');
+    
+    subplot(4,2,1);
+    plot(t, message, 'r', 'LineWidth', 1.5);
+    title('Message Signal');
+    xlabel('Time (s)');
+    ylabel('Amplitude');
+    grid on;
+
+    subplot(4,2,2);
+    plot(frequencies, spectrum_message, 'r', 'LineWidth', 1.5);
+    title('Spectrum of Message Signal');
+    xlabel('Frequency (Hz)');
+    ylabel('Magnitude');
+    grid on;
+
+    subplot(4,2,3);
+    stairs(t, quantized, 'g', 'LineWidth', 1.5);
+    title('Quantized Signal');
+    xlabel('Time (s)');
+    ylabel('Amplitude');
+    grid on;
+
+    subplot(4,2,4);
+    plot(frequencies, spectrum_quantized, 'g', 'LineWidth', 1.5);
+    title('Spectrum of Quantized Signal');
+    xlabel('Frequency (Hz)');
+    ylabel('Magnitude');
+    grid on;
+
+    subplot(4,2,5);
+    plot(t, quantization_error, 'b', 'LineWidth', 1.5);
+    title(['Quantization Error (N = ', num2str(N), ')']);
+    xlabel('Time (s)');
+    ylabel('Error');
+    grid on;
+
+    subplot(4,2,6);
+    stairs(t, decoded, 'm', 'LineWidth', 1.5);
+    title('Decoded Signal');
+    xlabel('Time (s)');
+    ylabel('Amplitude');
+    grid on;
+
+    subplot(4,2,7);
+    stairs(t, encoded_binary, 'k', 'LineWidth', 1.5);
+    title('Encoded Signal');
+    xlabel('Time (s)');
+    ylabel('Binary Value');
+    grid on;
+
+    subplot(4,2,8);
+    plot(frequencies, spectrum_decoded, 'm', 'LineWidth', 1.5);
+    title('Spectrum of Decoded Signal');
+    xlabel('Frequency (Hz)');
+    ylabel('Magnitude');
+    grid on;
+end
